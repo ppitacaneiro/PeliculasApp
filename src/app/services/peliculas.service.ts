@@ -12,6 +12,7 @@ export class PeliculasService {
 
   private baseUrl:string = 'https://api.themoviedb.org/3/';
   private page:number = 1;
+  public loading = false;
 
   constructor(private http:HttpClient) { }
 
@@ -24,8 +25,17 @@ export class PeliculasService {
   }
 
   getCartelera():Observable<CarteleraResponse> {
+
+    this.loading = true;
+    console.log('loading data from API');
+    
     return this.http.get<CarteleraResponse>(`${ this.baseUrl }movie/now_playing`,{
       params : this.params
-    });
+    }).pipe(
+      tap(() => {
+        this.loading = false;
+        this.page += 1;
+      })
+    );
   }
 }
