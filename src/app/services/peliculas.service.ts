@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { CarteleraResponse } from '../interfaces/cartelera-response';
+import { map } from 'rxjs/operators';
+import { CarteleraResponse, Movie } from '../interfaces/cartelera-response';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +37,17 @@ export class PeliculasService {
         this.loading = false;
         this.page += 1;
       })
+    );
+  }
+
+  searchMovies(txtSearch:string):Observable<Movie[]> {
+
+    const params = {...this.params, page:'1', query:txtSearch};
+
+    return this.http.get<CarteleraResponse>(`${ this.baseUrl }search/movie`, {
+      params
+    }).pipe(
+      map(response => response.results)
     );
   }
 }
