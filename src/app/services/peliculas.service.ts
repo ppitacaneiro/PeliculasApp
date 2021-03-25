@@ -1,11 +1,12 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { map } from 'rxjs/operators';
 import { CarteleraResponse, Movie } from '../interfaces/cartelera-response';
 import { MovieDetail } from '../interfaces/movie-detail';
+import { CreditDetail } from '../interfaces/credits-detail';
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +56,17 @@ export class PeliculasService {
   getMovieDetail(id:string) {
     return this.http.get<MovieDetail>(`${this.baseUrl}/movie/${id}`,{
       params : this.params
-    })
+    }).pipe(
+      catchError(err => of(null))
+    )
+  }
+
+  getCast(id:string) {
+    return this.http.get<CreditDetail>(`${this.baseUrl}/movie/${id}/credits`,{
+      params : this.params
+    }).pipe(
+      map(response => response.cast),
+      catchError(err => of(null)),
+    )
   }
 }
