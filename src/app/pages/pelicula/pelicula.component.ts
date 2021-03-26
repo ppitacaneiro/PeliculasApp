@@ -23,6 +23,13 @@ export class PeliculaComponent implements OnInit {
   ngOnInit(): void {
     const idMovie = this.activatedRouter.snapshot.params.id;
     console.log('idMovie => ' + idMovie);
+
+    this.peliculaService.getCast(idMovie).subscribe(cast => {
+      this.cast = cast;
+      console.log('cast0 => ');
+      console.log(this.cast);
+    });
+
     this.peliculaService.getMovieDetail(idMovie).subscribe(movie => {
       if (!movie)
       {
@@ -30,11 +37,6 @@ export class PeliculaComponent implements OnInit {
         return;
       }
       this.movie = movie;
-    });
-    
-    this.peliculaService.getCast(idMovie).subscribe(casting => {
-      this.cast = casting;
-      console.log(this.cast);
     });
   }
 
