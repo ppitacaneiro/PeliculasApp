@@ -4,6 +4,7 @@ import { MovieDetail } from 'src/app/interfaces/movie-detail';
 import { PeliculasService } from 'src/app/services/peliculas.service';
 import { Location } from '@angular/common';
 import { Cast } from 'src/app/interfaces/credits-detail';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-pelicula',
@@ -24,19 +25,16 @@ export class PeliculaComponent implements OnInit {
     const idMovie = this.activatedRouter.snapshot.params.id;
     console.log('idMovie => ' + idMovie);
 
-    this.peliculaService.getCast(idMovie).subscribe(cast => {
-      this.cast = cast;
-      console.log('cast0 => ');
-      console.log(this.cast);
-    });
-
-    this.peliculaService.getMovieDetail(idMovie).subscribe(movie => {
-      if (!movie)
-      {
-        this.router.navigateByUrl('/home');
-        return;
-      }
-      this.movie = movie;
+    combineLatest([
+      this.peliculaService.getCast(idMovie),
+      this.peliculaService.getMovieDetail(idMovie)
+    ]).subscribe(([cast,movie]) => {
+        if (!movie) {
+          this.router.navigateByUrl('/home');
+          return;
+        }
+        this.movie = movie;
+        this.cast = cast;
     });
   }
 
